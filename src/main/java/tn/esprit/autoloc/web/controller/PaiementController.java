@@ -1,5 +1,6 @@
 package tn.esprit.autoloc.web.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,10 +12,11 @@ import tn.esprit.autoloc.service.IPaiementService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/paiements")
+@RequestMapping("/paiements")
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "*")
+@Tag(name = "Paiements", description = "Gestion des paiements (lecture seule)")
 public class PaiementController {
 
     private final IPaiementService paiementService;

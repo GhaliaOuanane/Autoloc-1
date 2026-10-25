@@ -1,5 +1,10 @@
 package tn.esprit.autoloc.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,15 +18,21 @@ import tn.esprit.autoloc.service.IVehiculeService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/vehicules")
+@RequestMapping("/vehicules")
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "*")
+@Tag(name = "Véhicules", description = "Gestion des véhicules")
 public class VehiculeController {
 
     private final IVehiculeService vehiculeService;
 
     @PostMapping
+    @Operation(summary = "Créer un véhicule")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Véhicule créé avec succès"),
+            @ApiResponse(responseCode = "400", description = "Données invalides")
+    })
     public ResponseEntity<Vehicule> creerVehicule(@RequestBody Vehicule vehicule) {
         log.info("POST /api/vehicules - Création d'un véhicule");
         try {
@@ -34,7 +45,12 @@ public class VehiculeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Vehicule> obtenirVehicule(@PathVariable Long id) {
+    @Operation(summary = "Consulter un véhicule")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Véhicule trouvé"),
+            @ApiResponse(responseCode = "404", description = "Véhicule introuvable")
+    })
+    public ResponseEntity<Vehicule> obtenirVehicule(@Parameter(description = "Identifiant du véhicule") @PathVariable Long id) {
         log.info("GET /api/vehicules/{}", id);
         return vehiculeService.obtenirVehiculeParId(id)
                 .map(vehicule -> new ResponseEntity<>(vehicule, HttpStatus.OK))
@@ -42,6 +58,8 @@ public class VehiculeController {
     }
 
     @GetMapping
+    @Operation(summary = "Lister tous les véhicules")
+    @ApiResponse(responseCode = "200", description = "Liste des véhicules retournée avec succès")
     public ResponseEntity<List<Vehicule>> obtenirTousLesVehicules() {
         log.info("GET /api/vehicules");
         List<Vehicule> vehicules = vehiculeService.obtenirTousLesVehicules();
@@ -78,7 +96,13 @@ public class VehiculeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Vehicule> modifierVehicule(@PathVariable Long id, @RequestBody Vehicule vehicule) {
+    @Operation(summary = "Modifier un véhicule")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Véhicule modifié avec succès"),
+            @ApiResponse(responseCode = "404", description = "Véhicule introuvable"),
+            @ApiResponse(responseCode = "400", description = "Données invalides")
+    })
+    public ResponseEntity<Vehicule> modifierVehicule(@Parameter(description = "Identifiant du véhicule") @PathVariable Long id, @RequestBody Vehicule vehicule) {
         log.info("PUT /api/vehicules/{}", id);
         try {
             vehicule.setIdVehicule(id);
@@ -91,7 +115,12 @@ public class VehiculeController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> supprimerVehicule(@PathVariable Long id) {
+    @Operation(summary = "Supprimer un véhicule")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Véhicule supprimé avec succès"),
+            @ApiResponse(responseCode = "404", description = "Véhicule introuvable")
+    })
+    public ResponseEntity<Void> supprimerVehicule(@Parameter(description = "Identifiant du véhicule") @PathVariable Long id) {
         log.info("DELETE /api/vehicules/{}", id);
         try {
             vehiculeService.supprimerVehicule(id);

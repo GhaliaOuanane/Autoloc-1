@@ -1,5 +1,6 @@
 package tn.esprit.autoloc.web.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,10 +12,11 @@ import tn.esprit.autoloc.service.IMaintenanceService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/maintenances")
+@RequestMapping("/maintenances")
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "*")
+@Tag(name = "Maintenances", description = "Gestion des maintenances")
 public class MaintenanceController {
 
     private final IMaintenanceService maintenanceService;

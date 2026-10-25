@@ -1,5 +1,10 @@
 package tn.esprit.autoloc.web.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,15 +16,21 @@ import tn.esprit.autoloc.service.IClientService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/clients")
+@RequestMapping("/clients")
 @RequiredArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "*")
+@Tag(name = "Clients", description = "Gestion des clients")
 public class ClientController {
 
     private final IClientService clientService;
 
     @PostMapping
+    @Operation(summary = "Créer un client")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Client créé avec succès"),
+            @ApiResponse(responseCode = "400", description = "Données invalides")
+    })
     public ResponseEntity<Client> creerClient(@RequestBody Client client) {
         log.info("POST /api/clients - Création d'un client");
         try {
@@ -32,7 +43,12 @@ public class ClientController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Client> obtenirClient(@PathVariable Long id) {
+    @Operation(summary = "Consulter un client")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Client trouvé"),
+            @ApiResponse(responseCode = "404", description = "Client introuvable")
+    })
+    public ResponseEntity<Client> obtenirClient(@Parameter(description = "Identifiant du client") @PathVariable Long id) {
         log.info("GET /api/clients/{}", id);
         return clientService.obtenirClientParId(id)
                 .map(client -> new ResponseEntity<>(client, HttpStatus.OK))
@@ -40,6 +56,8 @@ public class ClientController {
     }
 
     @GetMapping
+    @Operation(summary = "Lister tous les clients")
+    @ApiResponse(responseCode = "200", description = "Liste des clients retournée avec succès")
     public ResponseEntity<List<Client>> obtenirTousLesClients() {
         log.info("GET /api/clients");
         List<Client> clients = clientService.obtenirTousLesClients();
@@ -63,7 +81,13 @@ public class ClientController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Client> modifierClient(@PathVariable Long id, @RequestBody Client client) {
+    @Operation(summary = "Modifier un client")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Client modifié avec succès"),
+            @ApiResponse(responseCode = "404", description = "Client introuvable"),
+            @ApiResponse(responseCode = "400", description = "Données invalides")
+    })
+    public ResponseEntity<Client> modifierClient(@Parameter(description = "Identifiant du client") @PathVariable Long id, @RequestBody Client client) {
         log.info("PUT /api/clients/{}", id);
         try {
             client.setIdClient(id);
@@ -76,7 +100,12 @@ public class ClientController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> supprimerClient(@PathVariable Long id) {
+    @Operation(summary = "Supprimer un client")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Client supprimé avec succès"),
+            @ApiResponse(responseCode = "404", description = "Client introuvable")
+    })
+    public ResponseEntity<Void> supprimerClient(@Parameter(description = "Identifiant du client") @PathVariable Long id) {
         log.info("DELETE /api/clients/{}", id);
         try {
             clientService.supprimerClient(id);
