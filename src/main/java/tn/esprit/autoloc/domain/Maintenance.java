@@ -28,4 +28,9 @@ public class Maintenance {
 
     @Column(length = 500)
     private String description;
+
+    // Associations
+    @ManyToOne
+    @JoinColumn(name = "vehicule_id", nullable = false)
+    private Vehicule vehicule;
 }

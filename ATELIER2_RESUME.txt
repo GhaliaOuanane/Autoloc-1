@@ -1,0 +1,219 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                 ATELIER 2 - ASSOCIATIONS JPA - TERMINÉ                     ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+✅ MODIFICATIONS EFFECTUÉES
+━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. ✅ application.properties
+   Modifié: spring.jpa.hibernate.ddl-auto=create
+
+2. ✅ Agence.java
+   Ajout: @OneToMany vehicules, @OneToMany employes
+
+3. ✅ Vehicule.java
+   Ajout: @ManyToOne agence, @OneToMany reservations, 
+          @OneToMany maintenances, @ManyToMany equipements
+
+4. ✅ Client.java
+   Ajout: @OneToMany reservations
+
+5. ✅ Employe.java
+   Ajout: @ManyToOne agence
+
+6. ✅ Equipement.java
+   Ajout: @ManyToMany vehicules (mappedBy)
+
+7. ✅ Reservation.java
+   Ajout: @ManyToOne client, @ManyToOne vehicule, @OneToOne contrat
+
+8. ✅ Contrat.java
+   Ajout: @OneToOne reservation, @OneToMany paiements
+
+9. ✅ Paiement.java
+   Ajout: @ManyToOne contrat
+
+10. ✅ Maintenance.java
+    Ajout: @ManyToOne vehicule
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 ASSOCIATIONS CRÉÉES (8 types)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Agence ↔ Vehicule        (OneToMany/ManyToOne)
+2. Agence ↔ Employe         (OneToMany/ManyToOne)
+3. Client ↔ Reservation     (OneToMany/ManyToOne)
+4. Vehicule ↔ Reservation   (OneToMany/ManyToOne)
+5. Vehicule ↔ Maintenance   (OneToMany/ManyToOne)
+6. Vehicule ↔ Equipement    (ManyToMany) → Table: vehicule_equipement
+7. Reservation ↔ Contrat    (OneToOne bidirectionnel)
+8. Contrat ↔ Paiement       (OneToMany/ManyToOne)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 TABLES MYSQL ATTENDUES: 10
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Tables d'entités (9):
+  1. agence
+  2. client
+  3. contrat
+  4. employe
+  5. equipement
+  6. maintenance
+  7. paiement
+  8. reservation
+  9. vehicule
+
+Table de jointure (1):
+  10. vehicule_equipement
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔑 CLÉS ÉTRANGÈRES ATTENDUES: 9
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Table             Colonne FK          Référence
+──────────────────────────────────────────────────────────────────
+vehicule          agence_id        → agence(idAgence)
+employe           agence_id        → agence(idAgence)
+reservation       client_id        → client(idClient)
+reservation       vehicule_id      → vehicule(idVehicule)
+contrat           reservation_id   → reservation(idReservation)
+paiement          contrat_id       → contrat(idContrat)
+maintenance       vehicule_id      → vehicule(idVehicule)
+vehicule_equipmt  vehicule_id      → vehicule(idVehicule)
+vehicule_equipmt  equipement_id    → equipement(idEquipement)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⏳ ÉTAPES À SUIVRE MAINTENANT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ÉTAPE 1: Configurer le mot de passe MySQL
+──────────────────────────────────────────
+Fichier: src/main/resources/application.properties
+Ligne à modifier: spring.datasource.password=VOTRE_MOT_DE_PASSE
+
+ÉTAPE 2: Lancer l'application
+──────────────────────────────
+Dans IntelliJ:
+- Ouvrir: AutolocApiApplication.java
+- Clic droit → Run
+
+ÉTAPE 3: Vérifier les logs
+───────────────────────────
+Vous devez voir dans la console:
+
+✓ Hibernate: drop table if exists agence cascade
+✓ Hibernate: drop table if exists client cascade
+... (10 tables drop au total)
+
+✓ Hibernate: create table agence (...)
+✓ Hibernate: create table client (...)
+... (10 tables create au total)
+
+✓ Hibernate: alter table contrat add constraint FK...
+✓ Hibernate: alter table employe add constraint FK...
+... (9 contraintes FK au total)
+
+✓ Started AutolocApiApplication in X.XXX seconds (sans erreur)
+
+ÉTAPE 4: Vérifier dans MySQL
+─────────────────────────────
+MySQL Workbench ou ligne de commande:
+
+USE autoloc_db;
+SHOW TABLES;
+
+Résultat attendu: 10 lignes (tables)
+
+Vérifier les FK:
+SELECT TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME
+FROM information_schema.KEY_COLUMN_USAGE
+WHERE TABLE_SCHEMA = 'autoloc_db' 
+  AND REFERENCED_TABLE_NAME IS NOT NULL;
+
+Résultat attendu: 9 lignes (clés étrangères)
+
+ÉTAPE 5: Remettre ddl-auto=update
+──────────────────────────────────
+Fichier: src/main/resources/application.properties
+Modifier: spring.jpa.hibernate.ddl-auto=update
+
+ÉTAPE 6: Relancer pour vérifier
+────────────────────────────────
+Relancer l'application
+→ Les logs NE doivent PAS montrer de drop/create
+→ Juste: "Started AutolocApiApplication in X.XXX seconds"
+
+ÉTAPE 7: Commit Git
+───────────────────
+git add .
+git commit -m "Atelier 2: Ajout des associations JPA entre entités"
+git push
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 DOCUMENTATION DISPONIBLE
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. ASSOCIATIONS_JPA.md       → Détail de toutes les associations
+2. VERIFICATION_ATELIER2.md  → Checklist complète de vérification
+3. QUICK_START.md            → Démarrage rapide
+4. README.md                 → Vue d'ensemble du projet
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ PROBLÈMES COURANTS
+━━━━━━━━━━━━━━━━━━━━
+
+Problème: "Cannot delete or update a parent row"
+Solution: Supprimer et recréer la base manuellement:
+  DROP DATABASE autoloc_db;
+  CREATE DATABASE autoloc_db;
+
+Problème: Pas de FK créées
+Solution: Vérifier que MySQL utilise InnoDB:
+  SHOW TABLE STATUS WHERE Name='vehicule';
+
+Problème: "Column 'xxx_id' not found"
+Solution: Vérifier les noms dans @JoinColumn
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 OBJECTIFS ATELIER 2
+━━━━━━━━━━━━━━━━━━━━
+
+✅ Supprimer tables existantes (ddl-auto=create)
+✅ Créer associations entre entités
+⏳ Générer la base de données
+⏳ Vérifier nombre de tables (10)
+⏳ Vérifier clés étrangères (9)
+⏳ Remettre ddl-auto=update
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📊 STATISTIQUES
+━━━━━━━━━━━━━━
+
+Fichiers modifiés:           10
+Lignes de code ajoutées:     ~150
+Associations JPA:            8 types (16 annotations au total)
+Tables créées:               10
+Clés étrangères:             9
+Documentation:               4 fichiers MD
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎉 BON COURAGE POUR LA VÉRIFICATION !
+
+Une fois toutes les vérifications faites, n'oubliez pas de:
+1. Remettre ddl-auto=update
+2. Faire le commit Git
+3. Passer à l'Atelier 3 (Repositories Spring Data JPA)
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    ATELIER 2 - PRÊT À TESTER ! 🚀                         ║
+╚════════════════════════════════════════════════════════════════════════════╝
